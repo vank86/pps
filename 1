@@ -1,0 +1,19 @@
+[x,fpx]=audioread('../../Documents/Termin_3_Wav/mbi04dziur.wav');
+Nx=length(x);
+t1= 0 : 1/fpx : (Nx-1)/fpx;
+
+Nf1=2^nextpow2(Nx); %liczba próbek widma, pierwsza potęga dwójki po wartości Nx (liczbie próbek sygnału x)
+N1=Nf1/2+1;
+v1=fft(x,Nf1);
+w1=abs(v1);
+f1=linspace(0,fpx/2,N1);
+
+dr=3;
+y=decimate(x,dr);
+fpy=fpx/dr;
+Ny=length(y);
+t2=0:1/fpy:(Ny-1)/fpy;
+subplot(4,2,1);
+plot(t2,y);
+xlabel('czas');
+ylabel('sygnal');
