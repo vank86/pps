@@ -2,7 +2,7 @@
 Nx=length(x);
 t1= 0 : 1/fpx : (Nx-1)/fpx;
 
-Nf1=2^nextpow2(Nx); %liczba próbek widma, pierwsza potęga dwójki po wartości Nx (liczbie próbek sygnału x)
+Nf1=2^nextpow2(Nx); 
 N1=Nf1/2+1;
 v1=fft(x,Nf1);
 w1=abs(v1);
@@ -15,5 +15,87 @@ Ny=length(y);
 t2=0:1/fpy:(Ny-1)/fpy;
 subplot(4,2,1);
 plot(t2,y);
+title ('wykres 1');
 xlabel('czas');
 ylabel('sygnal');
+
+%2
+Nf2=2^nextpow2(Ny);
+N2 = Nf2/2 + 1;
+v2 = fft(y,Nf2);
+w2 = abs(v2);
+f2 = linspace(0,fpy/2,N2);
+subplot(4,2,2);
+plot(f2,w2(1:N2));
+title('wykres 2');
+xlabel('częstotliwość');
+ylabel('widmo');
+
+%3, zmienne 800 i 201;
+
+M=201;
+fpf = 800;
+fpf1=(fpf/fpy)*2;
+h = fir1(M-1,fpf1,'low');
+th = 0 : 1/fpy: (M-1)/fpy;
+
+vh=fft(h, Nf2);
+wh=abs(vh); 
+subplot(4,2,3);
+plot(f2, wh(1:N2));
+xlabel('częstotliw ość')
+ylabel('transmitancja')
+
+%4
+yf=filter(h, 1, y);
+v3=fft(yf, Nf2);
+w3=abs(v3);
+subplot(4,2,4);
+plot(f2, w3(1:N2));
+xlabel('częstotliw ość');
+ylabel('widmo');
+
+%5
+fp13=150; %częstotliwość próbkowania
+n13=1500; %; liczba próbek
+t131=0 :1/fp13: 2; 
+t132=2 :1/fp13: 4; 
+t133=4 :1/fp13: 8;
+t134=8 :1/fp13:10;
+f131=2; %nadanie zmiennej wartości 2Hz
+f132=6; %nadanie zmiennej wartości 6Hz
+y133=1/3*randn(1,601); %szum o rozkładzie normalnym i amplitudzie jeden
+f134=2; %nadanie zmiennej wartości 2Hz
+y131=sin(2*pi*f131*t131); %generowanie sinusoidy
+y132=sin(2*pi*f132*t132+pi/4); %generowanie sinusoidy z fazą 45*
+y134=sin(2*pi*f134*t134+pi/2); %generowanie sinusoidy z fazą 90*
+y13=[y131 y132 y133 y134]; %złożenie sygnałów (suma wektorów)
+t13=[t131 t132 t133 t134]; %złożenie osi czasu (suma wektorów)
+subplot (4,2,5);
+plot (t13,y13);
+title ('Wykres 5');
+xlabel ('czas');
+ylabel('sygnał');
+
+%6
+taumax=400; % przesunięcie (może być podany czas, wtedy taumax = czas · częstotliwość)
+[r14,t14] = xcorr(y13, y13, taumax, 'biased'); % obliczanie autokorelacji i wygenerowanie odpowiedniej osi
+subplot (4,2,6);
+plot (t14,r14);
+title ('Wykres 6')
+xlabel('przesunięcie')
+ylabel('współczynnik korelacji');
+
+
+%7
+f15=2; %nadanie zmiennej wartości 2Hz
+y15=sin(2*pi*f15*t13); %generowanie sygnału sinusoidalnego
+taumax=400; %przesunięcie (może być podany czas, wtedy kmax=czas · częstotliwość)
+[r15,t15]=xcorr(y13,y15, taumax, 'biased'); %obliczanie autokorelacji i wygenerowanieodpowiedniej osi
+subplot (4,2,7);
+plot (t15,r15);
+title ('Wykres 7');
+xlabel('przesunięcie');
+ylabel('współczynnik korelacji');
+
+%8
